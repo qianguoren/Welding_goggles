@@ -98,7 +98,7 @@
                 video: { 
                     width: 1000, 
                     height: 1000, 
-                    facingMode: { exact: "user" } }//调用前置摄像头，后置摄像头使用video: { facingMode: { exact: "environment" } }
+                    facingMode: { exact: "environment" } }//调用前置摄像头，后置摄像头使用video: { facingMode: { exact: "environment" } }
             }).then(success).catch(error);
 
         } else if (navigator.webkitGetUserMedia) {
