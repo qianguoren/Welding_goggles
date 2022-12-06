@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" />
+    <title>海克斯科技-超虚拟电焊帽</title>
+    <style>
+        .vrFrom {
+            display: flex;
+        }
+
+        #v {
+            margin-right: 5px;
+        }
+
+        #v1 {
+            margin-left: 5px;
+        }
+
+        #debugLog{
+            white-space: pre-line;
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+            /* margin: 0 auto; */
+            /* margin-top: 10px; */
+            /* margin-right: 5px; */
+            background-color: aquamarine;
+            display: block;
+        }
+
+        #video1 {
+            width: 100%;
+            height: 100%;
+            /* margin: 0 auto; */
+            /* margin-top: 10px; */
+            /* margin-right: 5px; */
+            background-color: aquamarine;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="vrFrom" class="vrFrom">
+        <div id="v"><video id="video"></video></div>
+        <div id="v1"><video id="video1"></video></div>
+    </div>
+    <button id="full-screen-btn">进入全屏</button>
+    <div id="debugLog"></div>
+    <script>
+        vrFrom = document.querySelector('body');
+        // vrFrom=document.getElementById("vrFrom")
+        log = document.getElementById("debugLog")
+        fullScreenBtn = document.getElementById('full-screen-btn');
+        var video = document.getElementById('video');
+        var video1 = document.getElementById('video1');
+
+
+        var flog=console.log;
+        console.log=function(){
+            flog(...arguments)
+            log_print(...arguments)
+        }
+
+        var ferr=console.error;
+        console.error=function(){
+            ferr(...arguments)
+            log_print("error#")
+            log_print(...arguments)
+        }
+
+
+        function log_print(text) {
+            logtime=Date.now()/1000
+            loginfo=`[${logtime}]:${text}`+"\n"         
+            log.textContent+=loginfo
+        }
+
+        fullScreenBtn.onclick = () => {
+            vrFrom.requestFullscreen().then(() => {
+                    console.log("进入全屏成功");
+                    // log_print("进入全屏成功")
+                    // fullScreenBtn.style.display="none"
+                }).catch(err =>  {
+                    console.log("进入全屏失败\n",err);
+                })
+        }
+
+        if (navigator.mediaDevices.getUserMedia) {
+            console.log("最新的标准API")
+            // alert("最新的标准API")
+            //最新的标准API
+            navigator.mediaDevices.getUserMedia({
+                video: { 
+                    width: 1000, 
+                    height: 1000, 
+                    facingMode: { exact: "user" } }//调用前置摄像头，后置摄像头使用video: { facingMode: { exact: "environment" } }
+            }).then(success).catch(error);
+
+        } else if (navigator.webkitGetUserMedia) {
+            console.log("webkit核心浏览器")
+            // alert("webkit核心浏览器")
+            //webkit核心浏览器
+            navigator.webkitGetUserMedia({
+                video: { 
+                    width: 1000, 
+                    height: 1000, 
+                    facingMode: { exact: "environment" } }//调用前置摄像头，后置摄像头使用video: { facingMode: { exact: "environment" } }
+            }, success, error)
+        } else if (navigator.mozGetUserMedia) {
+            console.log("firfox浏览器")
+            // alert("firfox浏览器")
+            //firfox浏览器
+            navigator.mozGetUserMedia({
+                video: { 
+                    width: 1000, 
+                    eight: 1000, 
+                    facingMode: { exact: "environment" } }//调用前置摄像头，后置摄像头使用video: { facingMode: { exact: "environment" } }
+            }, success, error);
+        } else if (navigator.getUserMedia) {
+            console.log("旧版API")
+            // alert("旧版API")
+            //旧版API
+            navigator.getUserMedia({
+                video: { 
+                    width: 1000, 
+                    height: 1000, 
+                    facingMode: { exact: "environment" } }//调用前置摄像头，后置摄像头使用video: { facingMode: { exact: "environment" } }
+            }, success, error);
+        }
+
+        function success(stream) {
+            //兼容webkit核心浏览器
+            // let CompatibleURL = window.URL || window.webkitURL;
+
+            //将视频流设置为video元素的源
+            console.log(stream);
+
+            //video.src = CompatibleURL.createObjectURL(stream);
+            video.srcObject = stream;
+            video.play();
+            video1.srcObject = stream;
+            video1.play();
+        }
+
+        function error(error) {
+            // console.log(`访问用户媒体设备失败${error.name}, ${error.message}`);
+            console.log(`访问用户媒体设备失败${error.name}, ${error.message}`)
+        }
+
+    </script>
+</body>
+
+</html>
